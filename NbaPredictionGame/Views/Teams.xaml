@@ -1,0 +1,29 @@
+﻿<Window x:Class="NbaPredictionGame.Views.Teams"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NbaPredictionGame.Views"
+        mc:Ignorable="d"
+        Title="Teams" WindowState="Maximized" Background="#FFF5D796">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <WrapPanel Width="100" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+            <Button Content="Matches" Name="MatchesButton" Click="Matches_Click"  Width="100"/>
+            <Button Content="Teams"  Name="TeamsButton" Click="Teams_Click" Width="100"/>
+            <Button Content="History" Name="HistoryButton" Width="100"/>
+            <Button Content="NBA Standings" Name="StandingsButton" Width="100"/>
+            <Button Content="Ranking" Width="100"/>
+        </WrapPanel>
+        <WrapPanel Margin="200,50,200,50">
+            <Label>
+                <Button />
+
+            </Label>
+        </WrapPanel>
+    </Grid>
+</Window>

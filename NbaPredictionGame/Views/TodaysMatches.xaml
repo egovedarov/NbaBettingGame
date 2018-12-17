@@ -1,0 +1,60 @@
+﻿<Window x:Class="NbaPredictionGame.TodayMatches"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NbaPredictionGame"
+        mc:Ignorable="d"
+        Title="NBA Prediction Game" WindowState="Maximized" Background="#FFF5D796">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel HorizontalAlignment="Right" Grid.Column="1">
+            <TextBlock Name="userInfoTextBox" FontSize="20" />
+        </StackPanel>
+
+        <WrapPanel Width="100" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical" Grid.Row="1">
+            <Button Content="Matches" Click="Button_Click_1" Width="100"/>
+            <Button Content="Teams" Click="Button_Click" Width="100"/>
+            <Button Content="History" Click="Button_Click_2" Width="100"/>
+            <Button Content="NBA Standings" Width="100"/>
+            <Button Content="Ranking" Width="100"/>
+        </WrapPanel>
+
+        <StackPanel Margin="20" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
+            <ListBox Name="gamesListBox" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="900" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionChanged="gamesListBox_SelectionChanged" Background="#FFF5D796">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="DarkBlue" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="150" />
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{Binding Path=VTeam.Image}" Height="150" Width="150" Grid.Column="0"/>
+                            <TextBlock Text="{Binding Path=VTeam.TeamName}" FontSize="36" VerticalAlignment="Center" Grid.Column="1"/>
+                            <TextBlock Text="{Binding Path=Dt}" FontSize="32" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Path=HTeam.TeamName}" FontSize="36" VerticalAlignment="Center" Grid.Column="3" HorizontalAlignment="Right"/>
+                            <Image Source="{Binding Path=HTeam.Image}" Height="150" Width="150" Grid.Column="4" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,35 @@
+﻿<Window x:Class="NbaPredictionGame.Views.Register"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NbaPredictionGame.Views"
+        xmlns:commands="clr-namespace:NbaPredictionGame.Commands"
+        mc:Ignorable="d"
+        Title="Register" Height="450" Width="800" Background="#FFF5D796">
+    <Window.CommandBindings>
+        <CommandBinding Command="commands:CustomCommands.Login" CanExecute="RegisterCommand_CanExecute" Executed="RegisterCommand_Executed" />
+    </Window.CommandBindings>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Select Time Zone" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+        <ComboBox Grid.Column="6" VerticalAlignment="Top" Width="250" Margin="0,20,0,0" SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBoxItem IsSelected="True">Default</ComboBoxItem>
+            <ComboBoxItem>GMT +2</ComboBoxItem>
+            <ComboBoxItem>GMT +3</ComboBoxItem>
+        </ComboBox>
+        
+        <StackPanel Grid.Row="0" MaxWidth="150" VerticalAlignment="Center">
+            <Label Content="Username"/>
+            <TextBox Name="userNameTextBox" VerticalAlignment="Center"/>
+            <Label Content="Password"/>
+            <PasswordBox Name="passwordTextBox" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <Button Name="registerButton" Command="commands:CustomCommands.Login" Content="Register" VerticalAlignment="Top" Grid.Row="1" Width="100"/>
+    </Grid>
+</Window>
