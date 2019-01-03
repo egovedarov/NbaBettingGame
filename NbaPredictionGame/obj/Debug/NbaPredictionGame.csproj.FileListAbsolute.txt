@@ -33,3 +33,5 @@ C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj
 C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj\Debug\Views\BetsHistoryWindow.baml
 C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj\Debug\Views\TodaysMatches.g.cs
 C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj\Debug\Views\TodaysMatches.baml
+C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj\Debug\Views\UserRanking.g.cs
+C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj\Debug\Views\UserRanking.baml

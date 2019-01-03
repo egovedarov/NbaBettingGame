@@ -12,18 +12,16 @@ namespace NbaPredictionGame.Backend.Database
     {
         public static User VerifyUser(String username, String password)
         {
-            MySqlConnection connection = GetConnection();
-
             string query = String.Format("select * from User where binary username='{0}' and pass='{1}';", username, password);
 
-            MySqlCommand cmd = new MySqlCommand(query, connection);
-
+            MySqlConnection connection = null;
             MySqlDataReader reader = null;
-
             User user = null;
 
             try
             {
+                connection = GetConnection();
+                MySqlCommand cmd = new MySqlCommand(query, connection);
                 //Execute command
                 reader = cmd.ExecuteReader();
                 reader.Read();
@@ -33,7 +31,7 @@ namespace NbaPredictionGame.Backend.Database
                 string pass = (string)reader["pass"];
                 int points = (Int32)reader["points"];
 
-                user = new User(id, name, pass, points);
+                user = new User(id, name, points, pass);
             }
             catch (MySqlException)
             {
@@ -41,7 +39,10 @@ namespace NbaPredictionGame.Backend.Database
             }
             finally
             {
-                CloseConnection(connection);
+                if (connection != null)
+                {
+                    connection.Close();
+                }
             }
 
             return user;
@@ -49,18 +50,17 @@ namespace NbaPredictionGame.Backend.Database
 
         public static List<Bet> GetUnscoredMatches(int userId)
         {
-            MySqlConnection connection = GetConnection();
-
             string query = String.Format("select * from Bets where userId={0} and isScored=false;", userId);
 
-            MySqlCommand cmd = new MySqlCommand(query, connection);
-
+            MySqlConnection connection = null;
             MySqlDataReader reader = null;
 
             List<Bet> bets = new List<Bet>();
 
             try
             {
+                connection = GetConnection();
+                MySqlCommand cmd = new MySqlCommand(query, connection);
                 //Execute command
                 reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -76,24 +76,32 @@ namespace NbaPredictionGame.Backend.Database
             {
                 return null;
             }
+            finally
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                }
+            }
 
             return bets;
         }
 
         public static List<Bet> GetLastTwentyBets(int userId)
         {
-            MySqlConnection connection = GetConnection();
 
-            string query = String.Format("select * from Bets where userId={0} and isScored=true limit 20;", userId);
+            string query = String.Format("select * from Bets where userId={0} and isScored=true order by id desc limit 20;", userId);
 
-            MySqlCommand cmd = new MySqlCommand(query, connection);
-
+            MySqlConnection connection = null;
             MySqlDataReader reader = null;
 
             List<Bet> bets = new List<Bet>();
 
             try
             {
+                connection = GetConnection();
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+
                 //Execute command
                 reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -110,22 +118,29 @@ namespace NbaPredictionGame.Backend.Database
             {
                 return null;
             }
+            finally
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                }
+            }
 
             return bets;
         }
 
         public static User AddUser(String username, String password)
         {
+            string query = String.Format("insert into User(username, pass) values('{0}', '{1}');", username, password);
+
             User user;
+            MySqlConnection connection = null;
 
             try
             {
-                MySqlConnection connection = GetConnection();
-
-                string query = String.Format("insert into User(username, pass) values('{0}', '{1}');", username, password);
+                connection = GetConnection();
 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
-
 
                 cmd.ExecuteNonQuery();
 
@@ -138,11 +153,18 @@ namespace NbaPredictionGame.Backend.Database
                 reader.Read();
                 int id = (Int32)reader["id"];
 
-                user = new User(id, username, password, 0);
+                user = new User(id, username, 0, password);
             }
             catch (MySqlException)
             {
                 return null;
+            }
+            finally
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                }
             }
 
             return user;
@@ -150,11 +172,13 @@ namespace NbaPredictionGame.Backend.Database
 
         public static bool PlaceBet(User user, Game game, string winner)
         {
+            string query = String.Format("insert into Bets(prediction,isScored,matchId,userId, matchDate) values('{0}',{1},{2},{3},{4});", winner, 0, game.Id, user.Id, DateTime.Today.ToString("yyyyMMdd"));
+
+            MySqlConnection connection = null;
+
             try
             {
-                MySqlConnection connection = GetConnection();
-
-                string query = String.Format("insert into Bets(prediction,isScored,matchId,userId, matchDate) values('{0}',{1},{2},{3},{4});", winner, 0, game.Id, user.Id, DateTime.Today.ToString("yyyyMMdd"));
+                connection = GetConnection();
 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
 
@@ -164,17 +188,26 @@ namespace NbaPredictionGame.Backend.Database
             {
                 return false;
             }
+            finally
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                }
+            }
 
             return true;
         }
 
         public static bool DoesGameBetExist(User user, Game game)
         {
+            string query = String.Format("select * from Bets where userId={0} and matchId={1};", user.Id, Convert.ToInt32(game.Id));
+
+            MySqlConnection connection = null;
+
             try
             {
-                MySqlConnection connection = GetConnection();
-
-                string query = String.Format("select * from Bets where userId={0} and matchId={1};", user.Id, Convert.ToInt32(game.Id));
+                connection = GetConnection();
 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
 
@@ -187,15 +220,24 @@ namespace NbaPredictionGame.Backend.Database
             {
                 return false;
             }
+            finally
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                }
+            }
         }
 
         public static bool UpdateUserScore(User user)
         {
+            string query = String.Format("update User set points = {0} where id = {1};", user.Score, user.Id);
+
+            MySqlConnection connection = null;
+
             try
             {
-                MySqlConnection connection = GetConnection();
-
-                string query = String.Format("update User set points = {0} where id = {1};", user.Score, user.Id);
+                connection = GetConnection();
 
                 MySqlCommand cmd = new MySqlCommand(query, connection);
 
@@ -213,15 +255,61 @@ namespace NbaPredictionGame.Backend.Database
 
                     cmd = new MySqlCommand(query, connection);
 
-                    cmd.ExecuteNonQuery(); 
+                    cmd.ExecuteNonQuery();
                 }
             }
             catch (MySqlException)
             {
                 return false;
             }
+            finally
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                }
+            }
 
             return true;
+        }
+
+        public static List<User> GetTopTenUsers()
+        {
+            string query = "select username,points from User order by points desc limit 10;";
+
+            List<User> users = new List<User>();
+            MySqlConnection connection = null;
+            MySqlDataReader reader = null;
+            int id = 1;
+
+            try
+            {
+                connection = GetConnection();
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                //Execute command
+                reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    string name = (string)reader["username"];
+                    int points = (Int32)reader["points"];
+
+                    users.Add(new User(id, name, points));
+                    id++;
+                }
+            }
+            catch (MySqlException)
+            {
+                return null;
+            }
+            finally
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                }
+            }
+
+            return users;
         }
 
         private static MySqlConnection GetConnection()
@@ -239,11 +327,6 @@ namespace NbaPredictionGame.Backend.Database
             connection.Open();
 
             return connection;
-        }
-
-        private static void CloseConnection(MySqlConnection connection)
-        {
-            connection.Close();
         }
     }
 }

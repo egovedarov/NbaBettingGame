@@ -27,7 +27,7 @@ namespace NbaPredictionGame.Views
 
         private void Matches_Click(object sender, RoutedEventArgs e)
         {
-            TodayMatches main = new TodayMatches(new User(0,"","",0));
+            TodayMatches main = new TodayMatches(new User(0,"",0));
             main.Show();
             this.Close();
         }

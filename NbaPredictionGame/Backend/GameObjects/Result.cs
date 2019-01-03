@@ -9,7 +9,9 @@ namespace NbaPredictionGame.Backend.GameObjects
     public class Result
     {
         private readonly string resultString;
-        private readonly bool isWinner = false;
+        private bool isWinner;
+        private string hTeamName;
+        private string vTeamName;
 
         public Result(string result, bool _isWinner=false)
         {
@@ -22,5 +24,7 @@ namespace NbaPredictionGame.Backend.GameObjects
         public bool IsWinner => isWinner;
 
         public int Winner { get; set; }
+        public string VTeamName { get => vTeamName; set => vTeamName = value; }
+        public string HTeamName { get => hTeamName; set => hTeamName = value; }
     }
 }

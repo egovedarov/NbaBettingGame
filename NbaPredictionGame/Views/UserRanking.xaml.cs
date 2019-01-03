@@ -1,10 +1,7 @@
-﻿using NbaPredictionGame.Backend;
-using NbaPredictionGame.Backend.APIs;
+﻿using NbaPredictionGame.Backend.Database;
 using NbaPredictionGame.Backend.GameObjects;
-using NbaPredictionGame.Views;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,35 +12,27 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace NbaPredictionGame
+namespace NbaPredictionGame.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for UserRanking.xaml
     /// </summary>
-    public partial class TodayMatches : Window
+    public partial class UserRanking : Window
     {
+        private User User { get; set; }
 
-        public static List<Game> Games { get; set; }
-
-        private User _user;
-        private User User { get => _user; set => _user = value; }
-
-        static TodayMatches()
+        public UserRanking(User user)
         {
-            Games = GamesApi.Games;
-        }
-
-        internal TodayMatches(User userrr)
-        {
-            this.User = userrr;
+            User = user;
 
             InitializeComponent();
+
             userNameTextBox.Text = String.Format("User: {0}   ", User.UserName);
             userScoreTextBox.Text = String.Format("Score: {0}", User.Score);
-            gamesListBox.ItemsSource = Games;
+
+            usersListBox.ItemsSource = DatabaseManager.GetTopTenUsers();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -60,14 +49,6 @@ namespace NbaPredictionGame
             this.Close();
         }
 
-        private void gamesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Game game = (Game)((ListBox)sender).SelectedItem;
-            MatchWindow matchWindow = new MatchWindow(this.User, game);
-            matchWindow.Show();
-            this.Close();
-        }
-
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             BetsHistoryWindow betHistoryWindow = new BetsHistoryWindow(User);
@@ -79,6 +60,7 @@ namespace NbaPredictionGame
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             UserRanking userRanking = new UserRanking(User);
+
             userRanking.Show();
             this.Close();
         }

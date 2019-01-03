@@ -22,7 +22,7 @@ namespace NbaPredictionGame.Backend.GameObjects
         public int Id { get => id; set => id = value; }
         public List<Bet> BetHistory { get => betHistory; set => betHistory = value; }
 
-        public User(int _id, string _userName, string _password, int _score)
+        public User(int _id, string _userName, int _score, string _password = null)
         {
             id = _id;
             userName = _userName;

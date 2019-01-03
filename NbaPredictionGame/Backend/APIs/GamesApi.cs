@@ -1,5 +1,6 @@
 ﻿using NbaPredictionGame.Backend.APIs;
 using NbaPredictionGame.Backend.GameObjects;
+using NbaPredictionGame.Views;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,6 @@ namespace NbaPredictionGame.Backend
         private const string matchUrlTemplate = "http://data.nba.net/json/cms/noseason/game/{0}/00{1}/boxscore.json";
         private static List<JToken> matches = null;
         private static int latestMatchIndex = 0;
-        private const int getEnoughMatches = 180;
 
         private static List<Game> games = new List<Game>();
 
@@ -26,79 +26,148 @@ namespace NbaPredictionGame.Backend
         public static void GetGames()
         {
             List<JToken> matches = GetAllMatches();
+            bool isFirst = false;
 
             foreach (JToken token in matches)
             {
                 Game game = token.ToObject<Game>();
-                if (DateTime.Parse(game.Dt).Date.Equals(DateTime.Today.Date))
+                if (DateTime.Parse(game.Dt).Date.Equals(Login.date.Date))
                 {
                     Games.Add(game);
-                }
-            }
-        }
-
-        public static List<Game> GetLastTenGames(String teamName, DateTime today)
-        {
-            List<Game> lastTenGames = new List<Game>();
-
-            if (matches == null)
-            {
-                matches = GetAllMatches();
-
-                foreach (JToken match in matches)
-                {
-                    Game game = match.ToObject<Game>();
-                    SetFullTeamNames(game);
-                    if (DateTime.Parse(game.Dt).Date.Equals(DateTime.Today.Date) && (game.HTeam.TeamName == teamName || game.VTeam.TeamName == teamName))
+                    if (!isFirst)
                     {
-                        latestMatchIndex = matches.IndexOf(match);
-                        break;
+                        latestMatchIndex = matches.IndexOf(token);
+                        isFirst = true;
                     }
                 }
-                matches = matches.GetRange(latestMatchIndex - getEnoughMatches, getEnoughMatches);
             }
-
-            int stopCount = 0;
-            for (int index = getEnoughMatches-1; index >= 0; index--)
-            {
-                Game game = matches[index].ToObject<Game>();
-                SetFullTeamNames(game);
-                if (game.HTeam.TeamName == teamName || game.VTeam.TeamName == teamName)
-                {
-                    GetMatchScore(game);
-                    lastTenGames.Add(game);
-                    stopCount++;
-                }
-                if (stopCount == 10)
-                {
-                    break;
-                }
-            }
-
-            return lastTenGames;
         }
 
-        public static List<Result> SetLastTenResults(String teamName, DateTime today)
+        public static Dictionary<Game, List<Game>> GetLastTenGames(List<Game> games, bool isLastTenHomeGames, DateTime today)
         {
-            List<Game> games = GetLastTenGames(teamName, today);
-            List<Result> results = new List<Result>();
-            string result;
-            bool isWinner;
+            Dictionary<Game, List<Game>> lastTenHomeGames = new Dictionary<Game, List<Game>>();
+            Dictionary<Game, List<Game>> lastTenVisitorGames = new Dictionary<Game, List<Game>>();
+            int numberOfAllOldGames = 10 * games.Count;
 
             foreach (Game game in games)
             {
-                isWinner = false;
-                if ((teamName == game.HTeam.TeamName && game.Winner == 2) || (teamName == game.VTeam.TeamName && game.Winner == 1))
-                {
-                    isWinner = true;
-                }
+                List<Game> lastGamesList = new List<Game>();
+                lastTenHomeGames.Add(game, lastGamesList);
 
-                result = game.VTeam.TeamName + " " + game.Score + " " + game.HTeam.TeamName;
-
-                results.Add(new Result(result, isWinner));
+                List<Game> lastGamesList2 = new List<Game>();
+                lastTenVisitorGames.Add(game, lastGamesList);
             }
 
-            return results;
+            matches = GetAllMatches();
+
+            if (isLastTenHomeGames)
+            {
+                int stopCountH = 0;
+                List<Game> lastGames = null;
+                for (int index = latestMatchIndex - 1; index >= 0; index--)
+                {
+                    Game oldGame = matches[index].ToObject<Game>();
+                    SetFullTeamNames(oldGame);
+
+                    foreach (Game game in games)
+                    {
+                        if (oldGame.HTeam.TeamName == game.HTeam.TeamName || oldGame.VTeam.TeamName == game.HTeam.TeamName)
+                        {
+                            if (lastTenHomeGames[game].Count == 10)
+                            {
+                                break;
+                            }
+                            SetMatchScore(oldGame);
+                            lastGames = lastTenHomeGames[game];
+                            lastGames.Add(oldGame);
+                            lastTenHomeGames[game] = lastGames;
+                            stopCountH++;
+                            break;
+                        }
+                    }
+                    if (stopCountH == numberOfAllOldGames)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                int stopCountV = 0;
+                List<Game> lastGames = null;
+                for (int index = latestMatchIndex - 1; index >= 0; index--)
+                {
+                    Game oldGame = matches[index].ToObject<Game>();
+                    SetFullTeamNames(oldGame);
+
+                    foreach (Game game in games)
+                    {
+                        if (oldGame.HTeam.TeamName == game.VTeam.TeamName || oldGame.VTeam.TeamName == game.VTeam.TeamName)
+                        {
+                            if (lastTenVisitorGames[game].Count == 10)
+                            {
+                                continue;
+                            }
+                            SetMatchScore(oldGame);
+                            lastGames = lastTenVisitorGames[game];
+                            lastGames.Add(oldGame);
+                            lastTenVisitorGames[game] = lastGames;
+                            stopCountV++;
+                            break;
+                        }
+                    }
+                    if (stopCountV == numberOfAllOldGames)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return isLastTenHomeGames ? lastTenHomeGames : lastTenVisitorGames;
+        }
+
+        public static void SetLastTenResults(List<Game> games, bool isLastTenHomeGames, DateTime today)
+        {
+            Dictionary<Game, List<Game>> lastTenGames = GetLastTenGames(games, isLastTenHomeGames, today);
+
+            string result;
+            bool isWinner;
+
+            foreach (KeyValuePair<Game, List<Game>> entry in lastTenGames)
+            {
+                List<Result> results = new List<Result>();
+                foreach (Game game in entry.Value)
+                {
+                    isWinner = false;
+
+                    if (isLastTenHomeGames)
+                    {
+                        if ((entry.Key.HTeam.TeamName == game.HTeam.TeamName && game.Winner == 1) || (entry.Key.HTeam.TeamName == game.VTeam.TeamName && game.Winner == 2))
+                        {
+                            isWinner = true;
+                        }
+                    }
+                    else
+                    {
+                        if ((entry.Key.VTeam.TeamName == game.HTeam.TeamName && game.Winner == 1) || (entry.Key.VTeam.TeamName == game.VTeam.TeamName && game.Winner == 2))
+                            isWinner = true;
+                    }
+
+                    result = game.VTeam.TeamName + " " + game.Score + " " + game.HTeam.TeamName;
+
+                    results.Add(new Result(result, isWinner));
+                }
+
+                if (isLastTenHomeGames)
+                {
+                    entry.Key.HTeamLastTenMatches = results;
+                }
+                else
+                {
+                    entry.Key.VTeamLastTenMatches = results;
+                }
+                Console.WriteLine("");
+            }
         }
 
         public static void SetFullTeamNames(List<Game> gamesToUpdate)
@@ -127,7 +196,7 @@ namespace NbaPredictionGame.Backend
             }
         }
 
-        public static void GetMatchScore(Game game)
+        public static void SetMatchScore(Game game)
         {
             DateTime matchDate = DateTime.Parse(game.Dt);
 
@@ -147,21 +216,43 @@ namespace NbaPredictionGame.Backend
 
             JObject jsonParser = JObject.Parse(rawJson);
             string visitorScore = jsonParser["sports_content"]["game"]["visitor"]["score"].Value<String>();
+            string vTeamAbbreviation = jsonParser["sports_content"]["game"]["visitor"]["abbreviation"].Value<String>();
             string homeScore = jsonParser["sports_content"]["game"]["home"]["score"].Value<String>();
+            string hTeamAbbreviation = jsonParser["sports_content"]["game"]["home"]["abbreviation"].Value<String>();
 
             int winner;
 
             if (Int32.Parse(visitorScore) > Int32.Parse(homeScore))
             {
-                winner = 1;
+                winner = 2;
             }
             else
             {
-                winner = 2;
+                winner = 1;
             }
 
             Result result = new Result(visitorScore + " : " + homeScore);
             result.Winner = winner;
+
+            int breakIndex = 0;
+            foreach (Team team in TeamsApi.Teams)
+            {
+                if (team.Abbreviation == vTeamAbbreviation)
+                {
+                    breakIndex++;
+                    result.VTeamName = team.TeamName;
+                }
+                else if (team.Abbreviation == hTeamAbbreviation)
+                {
+                    breakIndex++;
+                    result.HTeamName = team.TeamName;
+                }
+
+                if (breakIndex == 2)
+                {
+                    break;
+                }
+            }
 
             return result;
         }

@@ -55,6 +55,9 @@ namespace NbaPredictionGame.Views
 
             hTeamMatchesListBox.ItemsSource = HTeamMatches;
             vTeamMatchesListBox.ItemsSource = VTeamMatches;
+
+            userNameTextBox.Text = String.Format("User: {0}   ", User.UserName);
+            userScoreTextBox.Text = String.Format("Score: {0}", User.Score);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -85,13 +88,6 @@ namespace NbaPredictionGame.Views
 
             string winner = "1";
 
-            bool isDraw = drawCheckBox.IsChecked ?? false;
-
-            if (isDraw)
-            {
-                winner += "x";
-            }
-
             DatabaseManager.PlaceBet(User, Game, winner);
 
             main = new TodayMatches(User);
@@ -113,17 +109,25 @@ namespace NbaPredictionGame.Views
 
             string winner = "2";
 
-            bool isDraw = drawCheckBox.IsChecked ?? false;
-
-            if (isDraw)
-            {
-                winner += "x";
-            }
-
             DatabaseManager.PlaceBet(User, Game, winner);
 
             main = new TodayMatches(User);
             main.Show();
+            this.Close();
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            BetsHistoryWindow betHistoryWindow = new BetsHistoryWindow(User);
+
+            betHistoryWindow.Show();
+            this.Close();
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            UserRanking userRanking = new UserRanking(User);
+            userRanking.Show();
             this.Close();
         }
     }

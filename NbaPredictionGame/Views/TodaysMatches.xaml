@@ -5,31 +5,72 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NbaPredictionGame"
         mc:Ignorable="d"
-        Title="NBA Prediction Game" WindowState="Maximized" Background="#FFF5D796">
-    <Grid Margin="10">
+        Title="NBA Prediction Game" WindowState="Maximized" Background="LightGray">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <StackPanel HorizontalAlignment="Right" Grid.Column="1">
-            <TextBlock Name="userInfoTextBox" FontSize="20" />
-        </StackPanel>
+        <Border Background="Black" Grid.Row="0" Height="40" VerticalAlignment="Top"></Border>
+        <Border Background="Black" Grid.Row="0" Height="40" VerticalAlignment="Top">
+            <Border.RenderTransform>
+                <SkewTransform AngleY="1"/>
+            </Border.RenderTransform>
+        </Border>
+        <Border Background="Black" Height="40" Grid.Row="0" VerticalAlignment="Top">
+            <Border.RenderTransform>
+                <SkewTransform AngleY="2"/>
+            </Border.RenderTransform>
+        </Border>
+        <!--<Image Grid.Row="0" HorizontalAlignment="Center" Source="C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\Resources\Controlls\Ball.png" VerticalAlignment="Top" Height="80" Width="80"/>-->
 
-        <WrapPanel Width="100" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical" Grid.Row="1">
-            <Button Content="Matches" Click="Button_Click_1" Width="100"/>
-            <Button Content="Teams" Click="Button_Click" Width="100"/>
-            <Button Content="History" Click="Button_Click_2" Width="100"/>
-            <Button Content="NBA Standings" Width="100"/>
-            <Button Content="Ranking" Width="100"/>
+        <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Margin="10">
+            <Button Name="matchesButton" Content="Matches" Click="Button_Click_1" Width="140" Height="30" Foreground="DarkOrange" FontSize="18" FontWeight="Bold" BorderBrush="Black">
+                <Button.Background>
+                    <LinearGradientBrush  StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="DarkRed" Offset="0.3"/>
+                        <GradientStop Color="#FFE40C0C" Offset="0.9"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button Content="Teams" Visibility="Collapsed"  Click="Button_Click" Width="140" Height="30" FontSize="18" FontWeight="Bold" Foreground="DarkOrange" BorderBrush="Black">
+                <Button.Background>
+                    <LinearGradientBrush  StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="DarkRed" Offset="0.3"/>
+                        <GradientStop Color="#FFE40C0C" Offset="0.9"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button Content="History" Click="Button_Click_2" Width="140" Height="30" FontSize="18" FontWeight="Bold" Foreground="DarkOrange" BorderBrush="Black">
+                <Button.Background>
+                    <LinearGradientBrush  StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="DarkRed" Offset="0.3"/>
+                        <GradientStop Color="#FFE40C0C" Offset="0.9"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button Content="NBA Standings" Visibility="Collapsed" Width="140" Height="30" FontSize="18" FontWeight="Bold" Foreground="DarkOrange" BorderBrush="Black">
+                <Button.Background>
+                    <LinearGradientBrush  StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="DarkRed" Offset="0.3"/>
+                        <GradientStop Color="#FFE40C0C" Offset="0.9"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+            <Button Content="Ranking" Click="Button_Click_3"  Width="140" Height="30" FontSize="18" FontWeight="Bold" Foreground="DarkOrange" BorderBrush="Black">
+                <Button.Background>
+                    <LinearGradientBrush  StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="DarkRed" Offset="0.3"/>
+                        <GradientStop Color="#FFE40C0C" Offset="0.9"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
         </WrapPanel>
 
-        <StackPanel Margin="20" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
-            <ListBox Name="gamesListBox" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="900" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionChanged="gamesListBox_SelectionChanged" Background="#FFF5D796">
+        <StackPanel Margin="20" Grid.Row="1" VerticalAlignment="Center">
+            <ListBox Name="gamesListBox" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="750" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionChanged="gamesListBox_SelectionChanged" Background="#FFFFB225">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="BorderThickness" Value="1" />
@@ -55,6 +96,16 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+        </StackPanel>
+
+        <Border Background="DarkRed" Grid.Row="2" Height="100" VerticalAlignment="Top">
+            <Border.RenderTransform>
+                <SkewTransform AngleY="2"/>
+            </Border.RenderTransform>
+        </Border>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Orientation="Horizontal">
+            <TextBlock Name="userNameTextBox" FontSize="26" Foreground="DarkOrange"/>
+            <TextBlock Name="userScoreTextBox" FontSize="26" Foreground="DarkOrange"/>
         </StackPanel>
     </Grid>
 </Window>

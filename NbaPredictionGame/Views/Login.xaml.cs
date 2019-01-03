@@ -26,23 +26,36 @@ namespace NbaPredictionGame.Views
     public partial class Login : Window
     {
         public static TodayMatches main = null;
+        public static DateTime date;
 
         private Thread getBetHistory;
         private int hoursToAdd;
+        private User User { get; set; }
 
         public Login()
         {
+            if (DateTime.Now.Hour < 6)
+            {
+                date = DateTime.Now.AddHours(-6);
+            }
+            else
+            {
+                date = DateTime.Now;
+            }
+
             TeamsApi.UpdateTeamIcons = false;
             TeamsApi.GetTeams();
 
             GamesApi.GetGames();
             GamesApi.SetFullTeamNames(GamesApi.Games);
 
-            Thread getLastTenHTeamsGames = new Thread(GetAllLastHTeamTenGames);
-            getLastTenHTeamsGames.Start();
+            Thread getLastTenHTeamsGames = new Thread(SetAllLastHTeamTenGames);
+            getLastTenHTeamsGames.Start(true);
 
-            Thread getLastTenVTeamsGames = new Thread(GetAllLastVTeamTenGames);
-            getLastTenVTeamsGames.Start();
+            Thread getLastTenVTeamsGames = new Thread(SetAllLastHTeamTenGames);
+            getLastTenVTeamsGames.Start(false);
+
+            Thread.Sleep(3000);
 
             getBetHistory = new Thread(GetBetHistory);
 
@@ -65,29 +78,29 @@ namespace NbaPredictionGame.Views
 
         private void LoginCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            User user = DatabaseManager.VerifyUser(userNameTextBox.Text, passwordTextBox.Password);
+            User = DatabaseManager.VerifyUser(userNameTextBox.Text, passwordTextBox.Password);
 
-            if (user!=null)
+            if (User != null)
             {
-                getBetHistory.Start(user);
-                user.BetMatchIds = DatabaseManager.GetUnscoredMatches(user.Id);
+                User.BetMatchIds = DatabaseManager.GetUnscoredMatches(User.Id);
 
-                foreach(Bet bet in user.BetMatchIds)
+                foreach (Bet bet in User.BetMatchIds)
                 {
                     bet.ActualScore = Convert.ToString(GamesApi.GetMatchScore(Int32.Parse(bet.MatchId), bet.MatchDate).Winner);
                     if (bet.ActualScore == bet.Prediction)
                     {
-                        user.Score += 1;
+                        User.Score += 1;
                     }
                 }
+                DatabaseManager.UpdateUserScore(User);
 
-                DatabaseManager.UpdateUserScore(user);
+                getBetHistory.Start(User.Id);
 
-                foreach(Game game in GamesApi.Games)
+                foreach (Game game in GamesApi.Games)
                 {
                     game.Dt = DateTime.Parse(game.Dt).AddHours(hoursToAdd).ToString();
                 }
-                main = new TodayMatches(user);
+                main = new TodayMatches(User);
                 main.Show();
                 this.Close();
             }
@@ -117,26 +130,15 @@ namespace NbaPredictionGame.Views
             }
         }
 
-        void GetAllLastHTeamTenGames()
+        void SetAllLastHTeamTenGames(object isLastTenHomeGames)
         {
-            foreach (Game game in GamesApi.Games)
-            {
-                game.HTeamLastTenMatches = GamesApi.SetLastTenResults(game.HTeam.TeamName, DateTime.Today);
-            }
+            GamesApi.SetLastTenResults(GamesApi.Games, (bool)isLastTenHomeGames, date.AddDays(-1));
         }
 
-        void GetAllLastVTeamTenGames()
+        void GetBetHistory(object id)
         {
-            foreach (Game game in GamesApi.Games)
-            {
-                game.VTeamLastTenMatches = GamesApi.SetLastTenResults(game.VTeam.TeamName, DateTime.Today);
-            }
-        }
-
-        void GetBetHistory(object user)
-        {
-            List<Bet> betHistory = DatabaseManager.GetLastTwentyBets(((User)user).Id);
-            ((User)user).BetHistory = betHistory;
+            List<Bet> betHistory = DatabaseManager.GetLastTwentyBets((int)id);
+            User.BetHistory = betHistory;
         }
     }
 }

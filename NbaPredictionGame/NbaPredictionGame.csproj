@@ -95,6 +95,9 @@
     <Compile Include="Views\Teams.xaml.cs">
       <DependentUpon>Teams.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserRanking.xaml.cs">
+      <DependentUpon>UserRanking.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\TodaysMatches.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -131,6 +134,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\UserRanking.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -160,7 +167,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <Folder Include="Resources\Controlls\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
