@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -52,6 +53,11 @@ namespace NbaPredictionGame.Views
 
             hTeamWinButton.Content = Game.HTeam.TeamName + " Win";
             vTeamWinButton.Content = Game.VTeam.TeamName + " Win";
+
+            while(HTeamMatches.Count==0 || VTeamMatches.Count == 0)
+            {
+                Thread.Sleep(500);
+            }
 
             hTeamMatchesListBox.ItemsSource = HTeamMatches;
             vTeamMatchesListBox.ItemsSource = VTeamMatches;
