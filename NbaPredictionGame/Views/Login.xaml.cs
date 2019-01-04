@@ -123,15 +123,13 @@ namespace NbaPredictionGame.Views
             {
                 errorMessage = "There was a problem with the connection. Please try again later.";
                 errorTitle = "Connection error";
+                displayError(errorMessage, errorTitle);
             }
             {
                 errorMessage = "Wrong login credentials.";
                 errorTitle = "Unsuccessful login";
+                displayError(errorMessage, errorTitle);
             }
-            MessageBox.Show(errorMessage, errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
-            userNameTextBox.Text = "";
-            passwordTextBox.Password = "";
-            userNameTextBox.Focus();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -161,6 +159,14 @@ namespace NbaPredictionGame.Views
         {
             List<Bet> betHistory = DatabaseManager.GetLastTwentyBets((int)id);
             User.BetHistory = betHistory;
+        }
+
+        private void displayError(string errorMessage, string errorTitle)
+        {
+            MessageBox.Show(errorMessage, errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            userNameTextBox.Text = "";
+            passwordTextBox.Password = "";
+            userNameTextBox.Focus();
         }
     }
 }
