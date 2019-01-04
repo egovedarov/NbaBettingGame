@@ -38,3 +38,4 @@ C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj
 C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj\Debug\NbaPredictionGame.csproj.CopyComplete
 C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj\Debug\NbaPredictionGame.exe
 C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj\Debug\NbaPredictionGame.pdb
+C:\Users\MARIN\Desktop\NbaPredictionGame\NbaPredictionGame\NbaPredictionGame\obj\Debug\NbaPredictionGame.csprojAssemblyReference.cache

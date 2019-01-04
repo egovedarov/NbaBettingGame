@@ -79,11 +79,11 @@
         </StackPanel>
 
         <!-- First row -->
-        <Image Name="vTeamImage" Height="150" Width="170" Grid.Column="0" Grid.Row="1" Margin="10,0,0,0"/>
+        <Image Name="vTeamImage" Height="170" Width="170" Grid.Column="0" Grid.Row="1" Margin="10,0,0,0"/>
         <TextBlock Name="vTeamName" FontSize="36" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1"/>
         <TextBlock Name="gameTime" FontSize="32" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
         <TextBlock Name="hTeamName" FontSize="36" VerticalAlignment="Center" Grid.Column="3" HorizontalAlignment="Right" Grid.Row="1"/>
-        <Image Name="hTeamImage" Height="150" Width="170" Grid.Column="4" HorizontalAlignment="Right" Grid.Row="1" Margin="0,0,10,0"/>
+        <Image Name="hTeamImage" Height="170" Width="170" Grid.Column="4" HorizontalAlignment="Right" Grid.Row="1" Margin="0,0,10,0"/>
 
         <DockPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5" Margin="10,0,10,0" LastChildFill="False">
             <Button Name="hTeamWinButton" FontSize="26" Click="hTeamWinButton_Click" DockPanel.Dock="Right" FontWeight="Bold" BorderBrush="Black" Foreground="DarkOrange">

@@ -27,6 +27,7 @@ namespace NbaPredictionGame.Views
         public Register()
         {
             InitializeComponent();
+            userNameTextBox.Focus();
         }
 
         private void RegisterCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)

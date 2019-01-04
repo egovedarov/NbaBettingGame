@@ -120,7 +120,7 @@ namespace NbaPredictionGame.Backend.Database
             }
             catch (MySqlException)
             {
-                return null;
+                return bets;
             }
             finally
             {
