@@ -7,14 +7,14 @@
     <framework targetVersion="4.6.1" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="NbaPredictionGame.exe.manifest" size="6216">
+    <dependentAssembly dependencyType="install" codebase="NbaPredictionGame.exe.manifest" size="6719">
       <assemblyIdentity name="NbaPredictionGame.exe" version="1.0.0.5" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>0MeTOA3LUUgm8lL3IIHnH+lSygmRuGNie9Qo5IxRP7g=</dsig:DigestValue>
+        <dsig:DigestValue>7Cdw9Z4JIiodM9rvU4A+H/6ULG0oEoIOP2iNwXNNncY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
