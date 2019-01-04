@@ -29,5 +29,10 @@ namespace NbaPredictionGame.Backend.GameObjects
             password = _password;
             score = _score;
         }
+
+        public User()
+        {
+            id = 0;
+        }
     }
 }

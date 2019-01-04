@@ -33,9 +33,13 @@ namespace NbaPredictionGame.Backend.Database
 
                 user = new User(id, name, points, pass);
             }
-            catch (MySqlException)
+            catch (MySqlException e)
             {
-                return null;
+                if(e.Message.Contains("many connections"))
+                {
+                    user = new User();
+                }
+                return user;
             }
             finally
             {

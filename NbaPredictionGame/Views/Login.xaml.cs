@@ -92,8 +92,10 @@ namespace NbaPredictionGame.Views
         private void LoginCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             User = DatabaseManager.VerifyUser(userNameTextBox.Text, passwordTextBox.Password);
+            string errorMessage = "";
+            string errorTitle = "";
 
-            if (User != null)
+            if (User != null && User.Id != 0)
             {
                 User.BetMatchIds = DatabaseManager.GetUnscoredMatches(User.Id);
 
@@ -117,13 +119,19 @@ namespace NbaPredictionGame.Views
                 main.Show();
                 this.Close();
             }
-            else
+            else if (User.Id == 0)
             {
-                MessageBox.Show("Wrong login credentials.", "Unsuccessful login", MessageBoxButton.OK, MessageBoxImage.Error);
-                userNameTextBox.Text = "";
-                passwordTextBox.Password = "";
-                userNameTextBox.Focus();
+                errorMessage = "There was a problem with the connection. Please try again later.";
+                errorTitle = "Connection error";
             }
+            {
+                errorMessage = "Wrong login credentials.";
+                errorTitle = "Unsuccessful login";
+            }
+            MessageBox.Show(errorMessage, errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            userNameTextBox.Text = "";
+            passwordTextBox.Password = "";
+            userNameTextBox.Focus();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
