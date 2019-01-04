@@ -70,7 +70,7 @@
 
         <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="10">
             <TextBlock Name="noBetsTextBlock" Text="No previous bets were found." FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden"/>
-            <ListBox Name="betsListBox" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="750" ScrollViewer.HorizontalScrollBarVisibility="Auto" Background="#FFF5D796">
+            <ListBox Name="betsListBox" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="750" ScrollViewer.HorizontalScrollBarVisibility="Auto" Background="#FFF5D796" ScrollViewer.CanContentScroll="False">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="BorderThickness" Value="1" />

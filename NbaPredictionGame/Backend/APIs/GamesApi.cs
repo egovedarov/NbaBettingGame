@@ -18,6 +18,7 @@ namespace NbaPredictionGame.Backend
         private const string matchUrlTemplate = "http://data.nba.net/json/cms/noseason/game/{0}/00{1}/boxscore.json";
         private static List<JToken> matches = null;
         private static int latestMatchIndex = 0;
+        private static int numberOfAllOldGames = 10;
 
         private static List<Game> games = new List<Game>();
 
@@ -33,6 +34,8 @@ namespace NbaPredictionGame.Backend
                 Game game = token.ToObject<Game>();
                 if (DateTime.Parse(game.Dt).Date.Equals(Login.date.Date))
                 {
+                    game.HTeamLastTenMatches = new List<Result>();
+                    game.VTeamLastTenMatches = new List<Result>();
                     Games.Add(game);
                     if (!isFirst)
                     {
@@ -43,47 +46,30 @@ namespace NbaPredictionGame.Backend
             }
         }
 
-        public static Dictionary<Game, List<Game>> GetLastTenGames(List<Game> games, bool isLastTenHomeGames, DateTime today)
+        public static List<Game> GetLastTenGames(Game game, bool isLastTenHomeGames, DateTime today)
         {
-            Dictionary<Game, List<Game>> lastTenHomeGames = new Dictionary<Game, List<Game>>();
-            Dictionary<Game, List<Game>> lastTenVisitorGames = new Dictionary<Game, List<Game>>();
-            int numberOfAllOldGames = 10 * games.Count;
-
-            foreach (Game game in games)
-            {
-                List<Game> lastGamesList = new List<Game>();
-                lastTenHomeGames.Add(game, lastGamesList);
-
-                List<Game> lastGamesList2 = new List<Game>();
-                lastTenVisitorGames.Add(game, lastGamesList);
-            }
+            List<Game> lastTenHomeGames = new List<Game>();
+            List<Game> lastTenVisitorGames = new List<Game>();
 
             matches = GetAllMatches();
 
             if (isLastTenHomeGames)
             {
                 int stopCountH = 0;
-                List<Game> lastGames = null;
                 for (int index = latestMatchIndex - 1; index >= 0; index--)
                 {
                     Game oldGame = matches[index].ToObject<Game>();
                     SetFullTeamNames(oldGame);
 
-                    foreach (Game game in games)
+                    if (oldGame.HTeam.TeamName == game.HTeam.TeamName || oldGame.VTeam.TeamName == game.HTeam.TeamName)
                     {
-                        if (oldGame.HTeam.TeamName == game.HTeam.TeamName || oldGame.VTeam.TeamName == game.HTeam.TeamName)
+                        if (lastTenHomeGames.Count == 10)
                         {
-                            if (lastTenHomeGames[game].Count == 10)
-                            {
-                                break;
-                            }
-                            SetMatchScore(oldGame);
-                            lastGames = lastTenHomeGames[game];
-                            lastGames.Add(oldGame);
-                            lastTenHomeGames[game] = lastGames;
-                            stopCountH++;
                             break;
                         }
+                        SetMatchScore(oldGame);
+                        lastTenHomeGames.Add(oldGame);
+                        stopCountH++;
                     }
                     if (stopCountH == numberOfAllOldGames)
                     {
@@ -94,27 +80,20 @@ namespace NbaPredictionGame.Backend
             else
             {
                 int stopCountV = 0;
-                List<Game> lastGames = null;
                 for (int index = latestMatchIndex - 1; index >= 0; index--)
                 {
                     Game oldGame = matches[index].ToObject<Game>();
                     SetFullTeamNames(oldGame);
 
-                    foreach (Game game in games)
+                    if (oldGame.HTeam.TeamName == game.VTeam.TeamName || oldGame.VTeam.TeamName == game.VTeam.TeamName)
                     {
-                        if (oldGame.HTeam.TeamName == game.VTeam.TeamName || oldGame.VTeam.TeamName == game.VTeam.TeamName)
+                        if (lastTenVisitorGames.Count == 10)
                         {
-                            if (lastTenVisitorGames[game].Count == 10)
-                            {
-                                continue;
-                            }
-                            SetMatchScore(oldGame);
-                            lastGames = lastTenVisitorGames[game];
-                            lastGames.Add(oldGame);
-                            lastTenVisitorGames[game] = lastGames;
-                            stopCountV++;
                             break;
                         }
+                        SetMatchScore(oldGame);
+                        lastTenVisitorGames.Add(oldGame);
+                        stopCountV++;
                     }
                     if (stopCountV == numberOfAllOldGames)
                     {
@@ -126,31 +105,25 @@ namespace NbaPredictionGame.Backend
             return isLastTenHomeGames ? lastTenHomeGames : lastTenVisitorGames;
         }
 
-        public static void SetLastTenResults(List<Game> games, bool isLastTenHomeGames, DateTime today)
+        public static void SetLastTenResults(Game gameToUpdate, DateTime today, bool isHomeGame)
         {
-            Dictionary<Game, List<Game>> lastTenGames = GetLastTenGames(games, isLastTenHomeGames, today);
+            List<Game> lastTenHomeGames = null;
+            List<Game> lastTenVisitorGames = null;
 
             string result;
             bool isWinner;
 
-            foreach (KeyValuePair<Game, List<Game>> entry in lastTenGames)
+            if (isHomeGame)
             {
+                lastTenHomeGames = GetLastTenGames(gameToUpdate, true, today);
                 List<Result> results = new List<Result>();
-                foreach (Game game in entry.Value)
+                foreach (Game game in lastTenHomeGames)
                 {
                     isWinner = false;
 
-                    if (isLastTenHomeGames)
+                    if ((gameToUpdate.HTeam.TeamName == game.HTeam.TeamName && game.Winner == 1) || (gameToUpdate.HTeam.TeamName == game.VTeam.TeamName && game.Winner == 2))
                     {
-                        if ((entry.Key.HTeam.TeamName == game.HTeam.TeamName && game.Winner == 1) || (entry.Key.HTeam.TeamName == game.VTeam.TeamName && game.Winner == 2))
-                        {
-                            isWinner = true;
-                        }
-                    }
-                    else
-                    {
-                        if ((entry.Key.VTeam.TeamName == game.HTeam.TeamName && game.Winner == 1) || (entry.Key.VTeam.TeamName == game.VTeam.TeamName && game.Winner == 2))
-                            isWinner = true;
+                        isWinner = true;
                     }
 
                     result = game.VTeam.TeamName + " " + game.Score + " " + game.HTeam.TeamName;
@@ -158,15 +131,26 @@ namespace NbaPredictionGame.Backend
                     results.Add(new Result(result, isWinner));
                 }
 
-                if (isLastTenHomeGames)
+                gameToUpdate.HTeamLastTenMatches.AddRange(results);
+            }
+            else
+            {
+                lastTenVisitorGames = GetLastTenGames(gameToUpdate, false, today);
+                List<Result> results = new List<Result>();
+                foreach (Game game in lastTenVisitorGames)
                 {
-                    entry.Key.HTeamLastTenMatches = results;
+                    isWinner = false;
+
+                    if ((gameToUpdate.VTeam.TeamName == game.HTeam.TeamName && game.Winner == 1) || (gameToUpdate.VTeam.TeamName == game.VTeam.TeamName && game.Winner == 2))
+                    {
+                        isWinner = true;
+                    }
+
+                    result = game.VTeam.TeamName + " " + game.Score + " " + game.HTeam.TeamName;
+
+                    results.Add(new Result(result, isWinner));
                 }
-                else
-                {
-                    entry.Key.VTeamLastTenMatches = results;
-                }
-                Console.WriteLine("");
+                gameToUpdate.VTeamLastTenMatches.AddRange(results);
             }
         }
 
@@ -259,11 +243,15 @@ namespace NbaPredictionGame.Backend
 
         private static List<JToken> GetAllMatches()
         {
-            WebClient client = new WebClient();
+            if (matches == null)
+            {
+                WebClient client = new WebClient();
 
-            string rawJson = client.DownloadString(gamesUrl);
-            JObject jsonParser = JObject.Parse(rawJson.Replace("\"id\":0", "\"id\":1"));
-            return jsonParser["sports_content"]["schedule"]["game"].Children().ToList();
+                string rawJson = client.DownloadString(gamesUrl);
+                JObject jsonParser = JObject.Parse(rawJson.Replace("\"id\":0", "\"id\":1"));
+                return jsonParser["sports_content"]["schedule"]["game"].Children().ToList();
+            }
+            return matches;
         }
     }
 }

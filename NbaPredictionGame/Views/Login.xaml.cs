@@ -32,6 +32,17 @@ namespace NbaPredictionGame.Views
         private int hoursToAdd;
         private User User { get; set; }
 
+        struct ThreadObject
+        {
+            public ThreadObject(int _index, bool _isHomeGames)
+            {
+                index = _index;
+                isHomeGames = _isHomeGames;
+            }
+            public int index;
+            public bool isHomeGames;
+        };
+
         public Login()
         {
             if (DateTime.Now.Hour < 6)
@@ -49,13 +60,15 @@ namespace NbaPredictionGame.Views
             GamesApi.GetGames();
             GamesApi.SetFullTeamNames(GamesApi.Games);
 
-            Thread getLastTenHTeamsGames = new Thread(SetAllLastHTeamTenGames);
-            getLastTenHTeamsGames.Start(true);
+            for (int index = 0; index < GamesApi.Games.Count; index++)
+            {
+                ThreadPool.QueueUserWorkItem(SetAllLastHTeamTenGames, new ThreadObject(index, true));
+            }
 
-            Thread getLastTenVTeamsGames = new Thread(SetAllLastHTeamTenGames);
-            getLastTenVTeamsGames.Start(false);
-
-            Thread.Sleep(3000);
+            for (int index = 0; index < GamesApi.Games.Count; index++)
+            {
+                ThreadPool.QueueUserWorkItem(SetAllLastHTeamTenGames, new ThreadObject(index, false));
+            }
 
             getBetHistory = new Thread(GetBetHistory);
 
@@ -130,9 +143,10 @@ namespace NbaPredictionGame.Views
             }
         }
 
-        void SetAllLastHTeamTenGames(object isLastTenHomeGames)
+        void SetAllLastHTeamTenGames(object _threadObject)
         {
-            GamesApi.SetLastTenResults(GamesApi.Games, (bool)isLastTenHomeGames, date.AddDays(-1));
+            ThreadObject threadObject = (ThreadObject)_threadObject;
+            GamesApi.SetLastTenResults(GamesApi.Games[threadObject.index], date.AddDays(-1), threadObject.isHomeGames);
         }
 
         void GetBetHistory(object id)

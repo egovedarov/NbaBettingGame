@@ -70,7 +70,7 @@
         </WrapPanel>
 
         <StackPanel Margin="20" Grid.Row="1" VerticalAlignment="Center">
-            <ListBox Name="gamesListBox" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="750" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionChanged="gamesListBox_SelectionChanged" Background="#FFFFB225">
+            <ListBox Name="gamesListBox" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="750" ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionChanged="gamesListBox_SelectionChanged" Background="#FFFFB225" ScrollViewer.CanContentScroll="False">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="BorderThickness" Value="1" />
