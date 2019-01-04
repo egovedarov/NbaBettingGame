@@ -99,14 +99,27 @@ namespace NbaPredictionGame.Views
             {
                 User.BetMatchIds = DatabaseManager.GetUnscoredMatches(User.Id);
 
+                List<Bet> notScoredBets = new List<Bet>();
+
                 foreach (Bet bet in User.BetMatchIds)
                 {
-                    bet.ActualScore = Convert.ToString(GamesApi.GetMatchScore(Int32.Parse(bet.MatchId), bet.MatchDate).Winner);
+                    Result result = GamesApi.GetMatchScore(Int32.Parse(bet.MatchId), bet.MatchDate);
+
+                    if (result == null)
+                    {
+                        notScoredBets.Add(bet);
+                        continue;
+                    }
+
+                    bet.ActualScore = Convert.ToString(result.Winner);
                     if (bet.ActualScore == bet.Prediction)
                     {
                         User.Score += 1;
                     }
                 }
+
+                User.BetMatchIds = User.BetMatchIds.Except(notScoredBets).ToList();
+
                 DatabaseManager.UpdateUserScore(User);
 
                 getBetHistory.Start(User.Id);

@@ -16,11 +16,11 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="170" />
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="400"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="170" />
         </Grid.ColumnDefinitions>
 
         <Border Background="Black" Grid.Row="0" Height="40" VerticalAlignment="Top" Grid.ColumnSpan="5"></Border>

@@ -35,7 +35,7 @@ namespace NbaPredictionGame.Backend.Database
             }
             catch (MySqlException e)
             {
-                if(e.Message.Contains("many connections"))
+                if (e.Message.Contains("many connections"))
                 {
                     user = new User();
                 }
@@ -54,7 +54,7 @@ namespace NbaPredictionGame.Backend.Database
 
         public static List<Bet> GetUnscoredMatches(int userId)
         {
-            string query = String.Format("select * from Bets where userId={0} and isScored=false;", userId);
+            string query = String.Format("select * from Bets where userId={0} and isScored=false and matchDate!='{1}';", userId, DateTime.Today.ToString("yyyyMMdd"));
 
             MySqlConnection connection = null;
             MySqlDataReader reader = null;
@@ -93,8 +93,7 @@ namespace NbaPredictionGame.Backend.Database
 
         public static List<Bet> GetLastTwentyBets(int userId)
         {
-
-            string query = String.Format("select * from Bets where userId={0} and isScored=true order by id desc limit 20;", userId);
+            string query = String.Format("select * from Bets where userId={0} and isScored=true and matchDate!='{1}' order by id desc limit 20;", userId, DateTime.Today.ToString("yyyyMMdd"));
 
             MySqlConnection connection = null;
             MySqlDataReader reader = null;
@@ -247,15 +246,9 @@ namespace NbaPredictionGame.Backend.Database
 
                 cmd.ExecuteNonQuery();
 
-                query = String.Format("update Bets set isScored=true where userId={0};", user.Id);
-
-                cmd = new MySqlCommand(query, connection);
-
-                cmd.ExecuteNonQuery();
-
                 foreach (Bet bet in user.BetMatchIds)
                 {
-                    query = String.Format("update Bets set winner={0} where userId={1} and matchId={2}", bet.ActualScore, user.Id, bet.MatchId);
+                    query = String.Format("update Bets set winner={0}, isScored=true where userId={1} and matchId='{2}';", bet.ActualScore, user.Id, bet.MatchId);
 
                     cmd = new MySqlCommand(query, connection);
 

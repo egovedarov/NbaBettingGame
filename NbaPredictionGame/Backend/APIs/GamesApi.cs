@@ -206,6 +206,11 @@ namespace NbaPredictionGame.Backend
 
             int winner;
 
+            if (String.IsNullOrEmpty(visitorScore))
+            {
+                return null;
+            }
+
             if (Int32.Parse(visitorScore) > Int32.Parse(homeScore))
             {
                 winner = 2;

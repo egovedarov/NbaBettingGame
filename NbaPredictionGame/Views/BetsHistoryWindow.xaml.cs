@@ -39,6 +39,11 @@ namespace NbaPredictionGame.Views
                 foreach (Bet bet in User.BetHistory)
                 {
                     Result result = GamesApi.GetMatchScore(Int32.Parse(bet.MatchId), bet.MatchDate);
+                    if (result == null)
+                    {
+                        User.BetHistory.Remove(bet);
+                        continue;
+                    }
                     bet.HTeamName = result.HTeamName;
                     bet.VTeamName = result.VTeamName;
                     bet.Score = result.ResultString;
