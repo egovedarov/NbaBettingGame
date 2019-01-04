@@ -125,6 +125,7 @@ namespace NbaPredictionGame.Views
                 errorTitle = "Connection error";
                 displayError(errorMessage, errorTitle);
             }
+            else
             {
                 errorMessage = "Wrong login credentials.";
                 errorTitle = "Unsuccessful login";
